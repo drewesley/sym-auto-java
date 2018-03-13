@@ -1,4 +1,4 @@
-/** 
+/**
  *  RepDev - RepGen IDE for Symitar
  *  Copyright (C) 2007  Jake Poznanski, Ryan Schultz, Sean Delaney
  *  http://repdev.org/ <support@repdev.org>
@@ -106,8 +106,6 @@ public abstract class SymitarSession {
 	public abstract RunRepgenResult runRepGen(String name, int queue);
 	
 	public abstract RunRepgenResult runRepGenq(String name, int queue, int qtime);
-	
-	public abstract RunRepgenResult runRepGenp(String name, int queue, int qtime, String JobPrompts);
 	
 	public abstract SessionError UnlockConsoles();
 	

@@ -1,4 +1,4 @@
-/** 
+/**
  *	SymAutoJava
  *  Copyright 2013, Shane Morrell, Mike Blumenthal
  *
@@ -20,8 +20,6 @@ package com.repdev;
 
 import java.io.File;
 import java.io.FileReader;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Properties;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Logger;
@@ -64,7 +62,10 @@ public class SymAutoJava
 			session =  new DirectSymitarSession();
 			log.info("Connecting to Symitar...    server:" + server + " port:" + port + "  user:" + user);
 			SessionError error = session.connect(server, port, user, pw, sym, userId);
-			if (error != SessionError.NONE){
+			if (error == SessionError.SYM_UNAVAILABLE){
+				log.severe("Connection failed!  job: " + jobName + "  server: " + server + " port:" + port +  "  user: " + user +  "  " + error.toString());	
+				System.exit(2);
+			} else if (error != SessionError.NONE){
 				log.severe("Connection failed!  job: " + jobName + "  server: " + server + " port:" + port +  "  user: " + user +  "  " + error.toString());	
 				System.exit(1);
 			}
@@ -109,21 +110,12 @@ public class SymAutoJava
 					}
 				}
 				
-				//'JobPrompts' argument is optional
-				String JobPrompts = "";
-				if (args.length > 3) {
-					log.fine("Prompt args:" + args[3]);
-            		JobPrompts = args[3];
-				}
 				
 				
 				//Run the Job
 				SymitarFile symFile = new SymitarFile(sym, jobName, FileType.REPGEN);
 				int tseq = -1;
-				if (JobPrompts != "") {
-					SymitarSession.RunRepgenResult result =  session.runRepGenp(symFile.getName(), queue, qtime, JobPrompts);
-					tseq = result.getSeq();
-				} else if (qtime != -1){
+				if (qtime != -1){
 					SymitarSession.RunRepgenResult result =  session.runRepGenq(symFile.getName(), queue, qtime);
 					tseq = result.getSeq();
 				} else {
@@ -156,19 +148,17 @@ public class SymAutoJava
 		System.exit(0);
 	}
 	
-	
 	private Properties loadConfig(String filePath) throws Exception {
-		Properties config = new Properties();			
+		Properties config = new Properties();
 		File f = new File(filePath);
-		log.fine("config file path: " + f.getAbsolutePath());				
-		if(!f.exists()) {			
+		log.fine("config file path: " + f.getAbsolutePath());
+		if(!f.exists()) {
 			throw new Exception("Config file not found: " + filePath);
 		}			
 		
-
-		config.load(new FileReader(f));			
+		config.load(new FileReader(f));
 		return config;
-	}	
+	}
 	
 	
 }
